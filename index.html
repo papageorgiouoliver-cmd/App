@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Accountability Hub</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --card-bg: #1a1a1a;
+            --text-color: #ffffff;
+            --accent-critique: #ff3b30;
+            --accent-respect: #34c759;
+            --accent-warning: #ffcc00;
+            --border-color: #2c2c2e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Meter Styles */
+        .status-panel {
+            margin-bottom: 24px;
+        }
+
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #8e8e93;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background-color: #2c2c2e;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-critique);
+            transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1), background-color 0.4s ease;
+        }
+
+        /* Task List Styles */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #222224;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+
+        .task-item:hover {
+            background: #2c2c2e;
+            border-color: #3a3a3c;
+        }
+
+        .task-item input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #48484a;
+            border-radius: 6px;
+            margin-right: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .task-item input[type="checkbox"]:checked {
+            background-color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .task-item input[type="checkbox"]:checked::after {
+            content: "✓";
+            color: #000000;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .task-text {
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.2s, text-decoration 0.2s;
+        }
+
+        .task-item input[type="checkbox"]:checked ~ .task-text {
+            color: #8e8e93;
+            text-decoration: line-through;
+        }
+
+        /* AI Critique Box */
+        .critique-box {
+            background: #121212;
+            border-left: 4px solid var(--accent-critique);
+            border-radius: 4px 12px 12px 4px;
+            padding: 16px;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: border-color 0.4s ease;
+        }
+
+        .critique-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            color: var(--accent-critique);
+            transition: color 0.4s ease;
+        }
+
+        .critique-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            line-height: 1.4;
+            margin: 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Accountability Hub</h1>
+
+        <!-- Progress Panel -->
+        <div class="status-panel">
+            <div class="meter-label">
+                <span>Respect Level</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="task-list">
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" onchange="updateApp()">
+                <span class="task-text">Hit the Gym / Physical Training</span>
+            </label>
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" onchange="updateApp()">
+                <span class="task-text">Take a Cold Shower</span>
+            </label>
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" onchange="updateApp()">
+                <span class="task-text">Complete Homework / Academic Focus</span>
+            </label>
+            <label class="task-item">
+                <input type="checkbox" class="task-checkbox" onchange="updateApp()">
+                <span class="task-text">Clean Room / Environment Maintenance</span>
+            </label>
+        </div>
+
+        <!-- AI Coach Feedback -->
+        <div class="critique-box" id="critique-box">
+            <div class="critique-title" id="critique-title">AI Critique</div>
+            <p class="critique-text" id="critique-text">Loading status...</p>
+        </div>
+    </div>
+
+    <script>
+        // Array of custom responses based on completion level
+        const responses = {
+            savage: [
+                "Zero tasks done. You're operating at absolute baseline comfort. Do something.",
+                "Staring at a blank list won't build discipline. Check a box or accept being average.",
+                "The clock is ticking and your respect meter is flatlined. Get moving."
+            ],
+            warning: [
+                "Barely baseline. You did a couple of things, but you left the job half done.",
+                "Partial effort breeds partial results. Don't stop here.",
+                "You're avoiding the hardest tasks on purpose. Finish the list."
+            ],
+            respect: [
+                "Execution clean. Zero excuses made today. Keep this exact same energy tomorrow.",
+                "That's how momentum is built. Lock it in and repeat tomorrow.",
+                "No hesitation, just work. You earned your respect score today."
+            ]
+        };
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function updateApp() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercent = document.getElementById('progress-percent');
+            const critiqueBox = document.getElementById('critique-box');
+            const critiqueTitle = document.getElementById('critique-title');
+            const critiqueText = document.getElementById('critique-text');
+
+            const total = checkboxes.length;
+            let checkedCount = 0;
+
+            checkboxes.forEach(box => {
+                if (box.checked) checkedCount++;
+            });
+
+            // Calculate percentage
+            const percentage = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+            progressBar.style.width = percentage + '%';
+            progressPercent.innerText = percentage + '%';
+
+            // Determine status and color scheme
+            let state = 'savage';
+            let color = 'var(--accent-critique)';
+            let titleText = 'AI Critique: Savage';
+
+            if (percentage === 100) {
+                state = 'respect';
+                color = 'var(--accent-respect)';
+                titleText = 'AI Coach: Respect';
+            } else if (percentage >= 50) {
+                state = 'warning';
+                color = 'var(--accent-warning)';
+                titleText = 'AI Coach: Warning';
+            }
+
+            // Apply dynamic changes to UI
+            progressBar.style.backgroundColor = color;
+            critiqueBox.style.borderColor = color;
+            critiqueTitle.style.color = color;
+            critiqueTitle.innerText = titleText;
+            
+            // Generate critique text based on state
+            // Uses a simple hash of checked tasks to keep the text consistent unless a task changes
+            let hash = 0;
+            checkboxes.forEach((box, index) => { if(box.checked) hash += index + 1; });
+            const list = responses[state];
+            critiqueText.innerText = list[hash % list.length];
+        }
+
+        // Initialize on page load
+        window.onload = updateApp;
+    </script>
+</body>
+</html>
